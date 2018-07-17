@@ -15,13 +15,67 @@
 //------------------------------------------------------------------------------
 
 var request = require('request');
-
 module.exports = function () {
     return {
         "handleWatsonResponse": function (bot, message, clientType) {
             let customSlackMessage = false;
             let customFacebookMessage = false;
-            let actionToBeInvoked = false;
+            let actionToBeInvoked = false
+            console.log(message);
+            if (message.watsonError) {
+                console.log(message.watsonError);
+                bot.reply(message, 'Es gab einen Fehler bei der Kommunikation mit Watson!');
+                return;
+            }
+            if (message.watsonData) {
+                if (message.watsonData.context.action) {
+                    actionToBeInvoked = true;
+                }
+            }
+            if (actionToBeInvoked == true) {
+                bot.reply(message, message.watsonData.output.text.join('\n'));
+                invokeAction(message.watsonData, bot, message);
+            }
+            else {
+                if (message.watsonData.output.text && message.watsonData.output.text.length > 0) {
+                    //message.watsonData.output.text.forEach(function (text) {
+                    //  bot.reply(message, text);
+                    bot.reply(message, message.watsonData.output.text.join('\n'));
+                } else {
+                    bot.reply(message, 'Hier sollte ich nicht reinlaufen.')
+                }
+            }
+        }
+    }
+}
+
+    function invokeAction(watsonDataOutput, bot, message) {
+        let actionName = watsonDataOutput.context.action;
+
+        switch (actionName) {
+
+            case 'incident.new':
+                createIncident(watsonDataOutput.context, bot, message);
+                break;
+
+            default:
+            bot.reply(message, "Sorry, I cannot execute what you've asked me to do");
+        }
+    }
+
+    function createIncident(context, bot, message) {
+        let incidentNumber = Math.floor(Math.random() * 5000);
+         bot.reply(message, `Incident wurde erstellt mit ${incidentNumber}.`);
+         controller.storage.users.delete(message.user);
+    }
+
+/*
+module.exports = function () {
+    return {
+        "handleWatsonResponse": function (bot, message, clientType) {
+            let customSlackMessage = false;
+            let customFacebookMessage = false;
+            let actionToBeInvoked = false
             console.log(message);
             if (message.watsonError) {
                 console.log(message.watsonError);
@@ -41,15 +95,15 @@ module.exports = function () {
                                 customFacebookMessage = true;
                             }
                         }
-                        if (message.watsonData.output.context.action) {
-                            actionToBeInvoked = true;
-                        }
                     }
+                }
+                if (message.watsonData.context.action) {
+                    actionToBeInvoked = true;
                 }
             }
             if (actionToBeInvoked == true) {
                 bot.reply(message, message.watsonData.output.text.join('\n'));
-                invokeAction(message.watsonData.output, bot, message);
+                invokeAction(message.watsonData, bot, message);
             }
             else {
                 if (customSlackMessage == true) {
@@ -113,8 +167,5 @@ function lookupWeather(watsonDataOutput, bot, message) {
     })
 
 }
+*/
 
-function createIncident(context, bot, message) {
-    let incidentNumber = Math.floor(Math.random() * 5000);
-    bot.reply(message, `Incident wurde erstellt mit ${incidentNumber}.`);
-}

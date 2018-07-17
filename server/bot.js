@@ -50,7 +50,7 @@ if (process.env.MONGO_URI) {
 }
 
 // Create the Botkit controller, which controls all instances of the bot.
-var controller = Botkit.socketbot(bot_options);
+controller = Botkit.socketbot(bot_options);
 
 // Set up an Express-powered webserver to expose oauth and webhook endpoints
 var webserver = require(__dirname + '/components/express_webserver.js')(controller);
@@ -76,13 +76,11 @@ controller.on('direct_message,direct_mention,mention,interactive_message_callbac
         if (!err) {
             sharedCode.handleWatsonResponse(bot, message, 'web');
             //bot.reply(message, "Hier weiter");
-        }
-        else {
+        } else {
             bot.reply(message, "I'm sorry, but for technical reasons I can't respond to your message");
         }
     });
 });
-
 
 function usage_tip() {
     console.log('~~~~~~~~~~');
