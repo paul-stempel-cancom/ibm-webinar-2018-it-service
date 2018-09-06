@@ -9,3 +9,14 @@ module.exports.createIncident = function(context) {
 
     //controller.storage.users.delete(message.user);
 }
+
+module.exports.listIncidents = function(context) {
+    
+    // bot.reply(message, `Incident wurde erstellt mit ${incidentNumber}.`);
+
+    return {
+        incidentList: "12345 \n 67890"
+    };
+
+    //controller.storage.users.delete(message.user);
+}

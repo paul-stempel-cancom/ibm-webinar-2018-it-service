@@ -35,7 +35,7 @@ async function handleWatsonResponseAsync(bot, message, clientType, middelware) {
 
         if (context.result) {
             for(var property in context.result) {
-                text = text.replace(`{${property}}`, context.result.incidentNumber);
+                text = text.replace(`{${property}}`, context.result[property]);
             }           
         }
 
@@ -49,6 +49,10 @@ function invokeAction(context) {
     switch (context.action_name) {
         case 'incident.new':
             context.result = incidents.createIncident(context);
+            deleteActionVariables(context);
+            return true;
+        case 'incident.list':
+            context.result = incidents.listIncidents(context);
             deleteActionVariables(context);
             return true;
         default:

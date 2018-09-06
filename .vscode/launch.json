@@ -8,7 +8,7 @@
             "type": "node",
             "request": "launch",
             "name": "Programm starten",
-            "program": "${workspaceFolder}/server\\bot.js"
+            "program": "${workspaceRoot}\\server\\bot.js"
         }
     ]
 }
